@@ -1,6 +1,7 @@
 import './env.js';
 import { fastify } from 'fastify';
 import fastifyStatic from 'fastify-static';
+import fastifyCookie from 'fastify-cookie';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDb } from './db.js';
@@ -15,6 +16,10 @@ const app = fastify();
 
 async function startApp() {
   try {
+    app.register(fastifyCookie, {
+      secret: process.env.COOKIE_SIGNATURE,
+    });
+
     app.register(fastifyStatic, {
       root: path.join(__dirname, 'public'),
     });
@@ -36,16 +41,26 @@ async function startApp() {
         );
         // Generate auth tokens
         // Set cookies
+        reply
+          .setCookie('testCookie', 'the value is this', {
+            path: '/',
+            domain: 'localhost',
+            httpOnly: true,
+          })
+          .send({
+            data: 'just testing',
+          });
       } catch (e) {
         console.error(e);
       }
     });
 
-    // app.get('/', {}, (request, reply) => {
-    //   reply.send({
-    //     data: 'hello world',
-    //   });
-    // });
+    app.get('/test', {}, (request, reply) => {
+      console.log(request.cookies.testCookie);
+      reply.send({
+        data: 'hello world',
+      });
+    });
 
     await app.listen(3000, () => console.log('Listening on 3000...'));
   } catch (e) {
