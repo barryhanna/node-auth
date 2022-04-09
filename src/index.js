@@ -42,18 +42,13 @@ async function startApp() {
         );
         if (isAuthorized) {
           await logUserIn(userId, request, reply);
-        }
-        // Generate auth tokens
-        // Set cookies
-        reply
-          .setCookie('testCookie', 'the value is this', {
-            path: '/',
-            domain: 'localhost',
-            httpOnly: true,
-          })
-          .send({
-            data: 'just testing',
+          reply.send({
+            data: 'User Logged In',
           });
+        }
+        reply.send({
+          data: 'Auth Failed',
+        });
       } catch (e) {
         console.error(e);
       }
