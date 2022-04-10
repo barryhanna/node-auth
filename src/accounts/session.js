@@ -1,13 +1,13 @@
-import { randomBytes } from "crypto"
+import { randomBytes } from 'crypto';
 
 export async function createSession(userId, connection) {
   try {
     // Generate a session token
-    const sessionToken = randomBytes(43).toString("hex")
+    const sessionToken = randomBytes(43).toString('hex');
     // retrieve connection information
-    const { ip, userAgent } = connection
+    const { ip, userAgent } = connection;
     // database insert for session
-    const { session } = await import("../session/session.js")
+    const { session } = await import('../db/session/session.js');
     await session.insertOne({
       sessionToken,
       userId,
@@ -16,10 +16,10 @@ export async function createSession(userId, connection) {
       ip,
       updatedAt: new Date(),
       createdAt: new Date(),
-    })
+    });
     // Return session token
-    return sessionToken
+    return sessionToken;
   } catch (e) {
-    throw new Error("Session Creation Failed")
+    throw new Error('Session Creation Failed');
   }
 }
